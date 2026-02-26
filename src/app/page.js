@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import GameCard from "@/components/GameCard";
 import { ArrowRight, Trophy, Users, MapPin, Play } from "lucide-react";
 import Link from "next/link";
