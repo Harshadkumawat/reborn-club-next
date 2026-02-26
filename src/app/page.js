@@ -3,21 +3,13 @@ import GameCard from "@/components/GameCard";
 import { ArrowRight, Trophy, Users, MapPin, Play } from "lucide-react";
 import Link from "next/link";
 
-async function getGames() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games`, {
-      cache: "no-store",
-    });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json.data || [];
-  } catch (err) {
-    return [];
-  }
-}
+
+import { getAllGames } from "@/controllers/gameController";
 
 export default async function Home() {
-  const games = await getGames();
+  
+  const response = await getAllGames();
+  const games = response.success ? response.data : [];
 
   return (
     <main className="min-h-screen bg-white text-black overflow-hidden">
