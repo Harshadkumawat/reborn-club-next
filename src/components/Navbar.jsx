@@ -1,12 +1,16 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, X, Trophy, Home, Info, Phone } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Menu, X, Trophy, Home, Info, Phone, LogOut } from "lucide-react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname(); 
+  const pathname = usePathname();
+  const router = useRouter();
+
+  // Check agar user Admin pages par hai
+  const isAdminPage = pathname.startsWith("/admin");
 
   const navLinks = [
     { name: "Home", href: "/", icon: <Home size={20} /> },
@@ -15,9 +19,18 @@ const Navbar = () => {
     { name: "Contact", href: "/contact", icon: <Phone size={20} /> },
   ];
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout");
+      setIsOpen(false);
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
+
   return (
     <>
-      {/* 🛠️ NAYA: Frosted Glass Navbar */}
       <nav className="fixed top-0 w-full z-50 bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
@@ -50,14 +63,23 @@ const Navbar = () => {
               })}
             </div>
 
-            {/* Desktop Action Button */}
+            {/* Desktop Action Button (Smart Switch) */}
             <div className="hidden md:block">
-              <Link
-                href="/admin/manage-games"
-                className="bg-orange-500 hover:bg-white text-black px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(249,115,22,0.2)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]"
-              >
-                Admin Panel
-              </Link>
+              {isAdminPage ? (
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2"
+                >
+                  <LogOut size={16} strokeWidth={3} /> Logout
+                </button>
+              ) : (
+                <Link
+                  href="/admin/manage-games"
+                  className="bg-orange-500 hover:bg-white text-black px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(249,115,22,0.2)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]"
+                >
+                  Admin Panel
+                </Link>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -71,7 +93,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* 🛠️ NAYA: Full-Screen Mobile Menu (Smooth Slide) */}
+      {/* Full-Screen Mobile Menu */}
       <div
         className={`md:hidden fixed inset-0 bg-[#0a0a0a] z-40 transition-transform duration-500 ease-in-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
@@ -100,13 +122,23 @@ const Navbar = () => {
             );
           })}
 
-          <Link
-            href="/admin/manage-games"
-            onClick={() => setIsOpen(false)}
-            className="mt-8 bg-orange-500 text-black px-10 py-4 rounded-full font-black text-sm uppercase tracking-widest shadow-[0_0_30px_rgba(249,115,22,0.3)] relative z-10"
-          >
-            Open Admin Panel
-          </Link>
+          {/* Mobile Action Button (Smart Switch) */}
+          {isAdminPage ? (
+            <button
+              onClick={handleLogout}
+              className="mt-8 bg-red-500/10 text-red-500 border border-red-500/20 px-10 py-4 rounded-full font-black text-sm uppercase tracking-widest flex items-center gap-2 relative z-10"
+            >
+              <LogOut size={18} strokeWidth={3} /> Logout
+            </button>
+          ) : (
+            <Link
+              href="/admin/manage-games"
+              onClick={() => setIsOpen(false)}
+              className="mt-8 bg-orange-500 text-black px-10 py-4 rounded-full font-black text-sm uppercase tracking-widest shadow-[0_0_30px_rgba(249,115,22,0.3)] relative z-10"
+            >
+              Open Admin Panel
+            </Link>
+          )}
         </div>
       </div>
     </>
