@@ -11,54 +11,77 @@ const getPublicIdFromUrl = (url) => {
   return publicId;
 };
 
+// 1. GET ALL GAMES
 export const getAllGames = async () => {
   try {
     await dbConnect();
     const games = await Game.find({}).sort({ createdAt: -1 });
     return { success: true, data: games, status: 200 };
   } catch (error) {
+    console.error("Fetch All Error:", error);
     return { success: false, message: "Fetch failed", status: 500 };
   }
 };
 
+// 2. GET GAME BY ID (For Admin Panel)
 export const getGameById = async (id) => {
   try {
     await dbConnect();
     const game = await Game.findById(id);
     if (!game)
-      return { success: false, message: "Game nahi mila", status: 404 };
+      return { success: false, message: "Game not found", status: 404 };
     return { success: true, data: game, status: 200 };
   } catch (error) {
     return { success: false, message: "Invalid ID", status: 400 };
   }
 };
 
+export const getGameBySlug = async (identifier) => {
+  try {
+    await dbConnect();
+
+    let game = await Game.findOne({ slug: identifier });
+
+    if (!game) {
+      game = await Game.findById(identifier).catch(() => null);
+    }
+
+    if (!game)
+      return { success: false, message: "Game not found", status: 404 };
+
+    return { success: true, data: game, status: 200 };
+  } catch (error) {
+    console.error("Fetch By Slug Error:", error);
+    return { success: false, message: "Database error", status: 500 };
+  }
+};
+
+// 3. DELETE GAME
 export const deleteGame = async (id) => {
   try {
     await dbConnect();
     const game = await Game.findById(id);
     if (!game)
-      return { success: false, message: "Game nahi mila", status: 404 };
+      return { success: false, message: "Game not found", status: 404 };
 
-    // 1. Delete Main Image
     if (game.image) {
       const mainId = getPublicIdFromUrl(game.image);
-      await cloudinary.uploader.destroy(mainId);
+      if (mainId) await cloudinary.uploader.destroy(mainId);
     }
 
-    // 2. Delete Gallery Images
     if (game.gallery && game.gallery.length > 0) {
       const deletePromises = game.gallery.map((url) => {
         const publicId = getPublicIdFromUrl(url);
-        return cloudinary.uploader.destroy(publicId);
+        if (publicId) return cloudinary.uploader.destroy(publicId);
       });
       await Promise.all(deletePromises);
     }
 
-    // 3. Delete Video (Cloudinary needs resource_type: "video")
+    // 3. Delete Video
     if (game.video) {
       const videoId = getPublicIdFromUrl(game.video);
-      await cloudinary.uploader.destroy(videoId, { resource_type: "video" });
+      if (videoId)
+        await cloudinary.uploader.destroy(videoId, { resource_type: "video" });
     }
 
     // 4. Delete from Database
@@ -66,7 +89,7 @@ export const deleteGame = async (id) => {
 
     return {
       success: true,
-      message: "Game, Images, Gallery aur Video sab clean! 🗑️",
+      message: "Game and associated media deleted successfully",
       status: 200,
     };
   } catch (error) {
@@ -82,16 +105,26 @@ export const updateGame = async (id, updateData) => {
 
     const oldGame = await Game.findById(id);
     if (!oldGame) {
-      return { success: false, message: "Game nahi mila", status: 404 };
+      return { success: false, message: "Game not found", status: 404 };
     }
 
+    // Handle old main image deletion
     if (updateData.image && oldGame.image) {
       const oldImageId = getPublicIdFromUrl(oldGame.image);
       if (oldImageId) {
         await cloudinary.uploader.destroy(oldImageId);
       }
     }
+
+    // Handle old video deletion
     if (updateData.video && oldGame.video) {
+      const oldVideoId = getPublicIdFromUrl(oldGame.video);
+      if (oldVideoId) {
+        await cloudinary.uploader.destroy(oldVideoId, {
+          resource_type: "video",
+        });
+      }
+    } else if (updateData.video === "" && oldGame.video) {
       const oldVideoId = getPublicIdFromUrl(oldGame.video);
       if (oldVideoId) {
         await cloudinary.uploader.destroy(oldVideoId, {
@@ -100,6 +133,7 @@ export const updateGame = async (id, updateData) => {
       }
     }
 
+    // Handle old gallery images deletion
     if (updateData.gallery && oldGame.gallery) {
       const urlsToDelete = oldGame.gallery.filter(
         (url) => !updateData.gallery.includes(url),
@@ -111,6 +145,8 @@ export const updateGame = async (id, updateData) => {
       });
       await Promise.all(deletePromises);
     }
+
+    // Update database
     const updatedGame = await Game.findByIdAndUpdate(id, updateData, {
       new: true,
       runValidators: true,

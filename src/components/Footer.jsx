@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Instagram, Youtube, Twitter, Mail, MapPin, Heart } from "lucide-react";
+import { Instagram, Mail, MapPin, Heart, Phone, Twitter } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -24,12 +24,39 @@ const Footer = () => {
               Indore ki galliyon se lekar digital duniya tak. Hamari mitti,
               hamare khel, aur hamari legacy ko zinda rakhne ki ek movement.
             </p>
-            <div className="flex items-center gap-2 text-orange-500 font-bold text-xs uppercase tracking-widest">
-              <MapPin size={16} /> MP-09, Indore
-            </div>
           </div>
 
-          {/* 2. Quick Links */}
+          {/* 2. Contact Info */}
+          <div>
+            <h3 className="text-white font-black uppercase tracking-widest text-sm mb-6">
+              Reach Out
+            </h3>
+            <ul className="space-y-4">
+              <li className="flex items-center gap-3 text-gray-400 font-bold text-sm tracking-wider">
+                <MapPin size={16} className="text-orange-500" /> MP-09, Indore
+              </li>
+              <li className="flex items-center gap-3 text-gray-400 font-bold text-sm tracking-wider">
+                <Phone size={16} className="text-orange-500" />
+                <a
+                  href="tel:+918103884547"
+                  className="hover:text-orange-500 transition"
+                >
+                  +91 81038 84547
+                </a>
+              </li>
+              <li className="flex items-center gap-3 text-gray-400 font-bold text-sm tracking-wider">
+                <Mail size={16} className="text-orange-500" />
+                <a
+                  href="mailto:rebornclubyouth@gmail.com"
+                  className="hover:text-orange-500 transition"
+                >
+                  rebornclubyouth@gmail.com
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* 3. Quick Links */}
           <div>
             <h3 className="text-white font-black uppercase tracking-widest text-sm mb-6">
               Explore
@@ -49,71 +76,36 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* 3. Legal & Admin */}
-          <div>
-            <h3 className="text-white font-black uppercase tracking-widest text-sm mb-6">
-              Club Access
-            </h3>
-            <ul className="space-y-4">
-              <li>
-                <Link
-                  href="/admin/manage-games"
-                  className="text-gray-400 hover:text-white text-sm font-bold transition-colors uppercase tracking-wider"
-                >
-                  Admin Login
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="text-gray-400 hover:text-white text-sm font-bold transition-colors uppercase tracking-wider"
-                >
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="text-gray-400 hover:text-white text-sm font-bold transition-colors uppercase tracking-wider"
-                >
-                  Terms of Service
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* 4. Social Links */}
+          {/* 4. Social Links (UPDATED WITH X) */}
           <div>
             <h3 className="text-white font-black uppercase tracking-widest text-sm mb-6">
               Join The Movement
             </h3>
             <p className="text-gray-400 text-sm leading-relaxed font-medium mb-6">
-              Hamare social media par judo aur apna bachpan wapas jeeyo.
+              Hamare socials par judo aur apna bachpan wapas jeeyo.
             </p>
             <div className="flex items-center gap-4">
               <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-orange-500 hover:text-black hover:border-orange-500 transition-all duration-300"
+                href="https://www.instagram.com/rebornclub.official?igsh=MWozOWRqcmk3bW9ibg=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-12 h-12 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 hover:bg-orange-500 hover:text-black transition-all duration-300 shadow-[0_0_15px_rgba(249,115,22,0.2)]"
               >
-                <Instagram size={18} />
+                <Instagram size={20} />
               </a>
               <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-orange-500 hover:text-black hover:border-orange-500 transition-all duration-300"
+                href="https://x.com/rebornclubyouth"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-orange-500 hover:text-black hover:border-orange-500 transition-all duration-300"
               >
-                <Youtube size={18} />
+                <Twitter size={20} />
               </a>
               <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-orange-500 hover:text-black hover:border-orange-500 transition-all duration-300"
+                href="mailto:rebornclubyouth@gmail.com"
+                className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-white hover:text-black transition-all duration-300"
               >
-                <Twitter size={18} />
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-orange-500 hover:text-black hover:border-orange-500 transition-all duration-300"
-              >
-                <Mail size={18} />
+                <Mail size={20} />
               </a>
             </div>
           </div>

@@ -18,6 +18,11 @@ export async function POST(req) {
     const description = formData.get("description");
     const category = formData.get("category");
 
+    const slug = name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)+/g, "");
+
     const imageFile = formData.get("image");
     if (!imageFile || typeof imageFile === "string") {
       return NextResponse.json(
@@ -68,6 +73,7 @@ export async function POST(req) {
     // 5. Save to Database
     const newGame = await Game.create({
       title: name,
+      slug: slug,
       description,
       category,
       image: imageUrl,

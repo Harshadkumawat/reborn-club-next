@@ -26,7 +26,16 @@ export async function PATCH(req, { params }) {
     const formData = await req.formData();
     const updateData = {};
 
-    if (formData.has("name")) updateData.title = formData.get("name");
+    // 🛠️ FIX: Agar 'name' update ho raha hai, toh 'slug' bhi update karo
+    if (formData.has("name")) {
+      const name = formData.get("name");
+      updateData.title = name;
+      updateData.slug = name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-") // Spaces ko '-' banayega
+        .replace(/(^-|-$)+/g, ""); // Extra '-' hatayega
+    }
+
     if (formData.has("description"))
       updateData.description = formData.get("description");
     if (formData.has("category"))
